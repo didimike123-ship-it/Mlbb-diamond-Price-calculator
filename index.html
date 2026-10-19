@@ -16,7 +16,7 @@
       background-color: #eef5ff;
       color: #111;
       padding: 15px 10px 30px 10px;
-      max-width: 720px;
+      max-width: 680px;
       margin: 0 auto;
     }
 
@@ -54,6 +54,7 @@
       border-radius: 4px;
       background-color: #fff;
       outline: none;
+      cursor: pointer;
     }
 
     .table-container {
@@ -65,14 +66,14 @@
       width: 100%;
       border-collapse: collapse;
       background-color: #fff;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       margin-top: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     th, td {
       border: 1px solid #ccc;
-      padding: 8px 3px;
+      padding: 8px 4px;
       text-align: center;
       vertical-align: middle;
     }
@@ -81,8 +82,8 @@
       background-color: #0066cc;
       color: #ffffff;
       font-weight: bold;
-      font-size: 0.8rem;
-      line-height: 1.25;
+      font-size: 0.85rem;
+      line-height: 1.3;
     }
 
     tbody tr:nth-child(even) {
@@ -128,13 +129,12 @@
 
   <div class="form-group">
     <label class="form-label" for="coinRateInput">ကိုယ်ဝယ်ယူထားသော ပေါက်ဈေး ထည့်ပါ:</label>
-    <!-- value="" ဖြင့် အလွတ်ထားပေးထားပါသည် -->
-    <input type="number" id="coinRateInput" class="form-input" value="" placeholder="ပေါက်ဈေး ရိုက်ထည့်ပါ (ဥပမာ - 87900)" oninput="calculateTable()">
+    <input type="number" id="coinRateInput" class="form-input" value="" inputmode="decimal" placeholder="ပေါက်ဈေး ရိုက်ထည့်ပါ (ဥပမာ - 87900)">
   </div>
 
   <div class="form-group">
     <label class="form-label" for="profitSelect">အမြတ် % ရွေးပါ:</label>
-    <select id="profitSelect" class="form-select" onchange="calculateTable()">
+    <select id="profitSelect" class="form-select">
       <option value="0">0%</option>
       <option value="1">1%</option>
       <option value="2">2%</option>
@@ -146,8 +146,13 @@
       <option value="8">8%</option>
       <option value="9">9%</option>
       <option value="10">10%</option>
+      <option value="11">11%</option>
       <option value="12">12%</option>
+      <option value="13">13%</option>
+      <option value="14">14%</option>
       <option value="15">15%</option>
+      <option value="20">20%</option>
+      <option value="25">25%</option>
     </select>
   </div>
 
@@ -155,9 +160,7 @@
     <table>
       <thead>
         <tr>
-          <th>No.</th>
           <th>Dia Plan</th>
-          <th>Org Dia<br>Plan</th>
           <th>Coin<br>Price</th>
           <th>MMK<br>Result</th>
           <th>အမြတ်</th>
@@ -177,42 +180,40 @@
 
   <script>
     const normalPlans = [
-      { no: 1, plan: "Weekly<br>Pass", org: "", coin: 76 },
-      { no: 2, plan: "Twilight<br>Pass", org: "", coin: 402.5 },
-      { no: 3, plan: "86", org: "78+8", coin: 61.5 },
-      { no: 4, plan: "172", org: "156+16", coin: 122 },
-      { no: 5, plan: "257", org: "234+23", coin: 177.5 },
-      { no: 6, plan: "343", org: "257+86", coin: 239 },
-      { no: 7, plan: "429", org: "257+172", coin: 299.5 },
-      { no: 8, plan: "514", org: "257+257", coin: 355 },
-      { no: 9, plan: "600", org: "514+86", coin: 416.5 },
-      { no: 10, plan: "706", org: "625+81", coin: 480 },
-      { no: 11, plan: "878", org: "706+172", coin: 602 },
-      { no: 12, plan: "963", org: "706+257", coin: 657.5 },
-      { no: 13, plan: "1049", org: "706+343", coin: 719 },
-      { no: 14, plan: "1135", org: "706+429", coin: 779.5 },
-      { no: 15, plan: "1412", org: "706+706", coin: 960 },
-      { no: 16, plan: "2195", org: "1860+335", coin: 1453 },
-      { no: 17, plan: "2901", org: "2195+706", coin: 1933 },
-      { no: 18, plan: "3688", org: "3099+589", coin: 2424 },
-      { no: 19, plan: "5532", org: "4649+883", coin: 3660 },
-      { no: 20, plan: "9288", org: "7740+1548", coin: 6079 }
+      { plan: "Weekly<br>Pass", coin: 76 },
+      { plan: "Twilight<br>Pass", coin: 402.5 },
+      { plan: "86", coin: 61.5 },
+      { plan: "172", coin: 122 },
+      { plan: "257", coin: 177.5 },
+      { plan: "343", coin: 239 },
+      { plan: "429", coin: 299.5 },
+      { plan: "514", coin: 355 },
+      { plan: "600", coin: 416.5 },
+      { plan: "706", coin: 480 },
+      { plan: "878", coin: 602 },
+      { plan: "963", coin: 657.5 },
+      { plan: "1049", coin: 719 },
+      { plan: "1135", coin: 779.5 },
+      { plan: "1412", coin: 960 },
+      { plan: "2195", coin: 1453 },
+      { plan: "2901", coin: 1933 },
+      { plan: "3688", coin: 2424 },
+      { plan: "5532", coin: 3660 },
+      { plan: "9288", coin: 6079 }
     ];
 
     const doublePlans = [
-      { no: 21, plan: "50+", org: "", coin: 39 },
-      { no: 22, plan: "150+", org: "", coin: 116.9 },
-      { no: 23, plan: "250+", org: "", coin: 187.5 },
-      { no: 24, plan: "500+", org: "", coin: 385 }
+      { plan: "50+", coin: 39 },
+      { plan: "150+", coin: 116.9 },
+      { plan: "250+", coin: 187.5 },
+      { plan: "500+", coin: 385 }
     ];
 
     function createRowHTML(item, ratePerCoin, profitPercent, isBlank) {
       if (isBlank) {
         return `
           <tr>
-            <td>${item.no}</td>
             <td>${item.plan}</td>
-            <td>${item.org}</td>
             <td>${item.coin}</td>
             <td>0.00</td>
             <td>0.00</td>
@@ -222,17 +223,19 @@
         `;
       }
 
+      // Coin Price နှင့် ပေါက်ဈေးမြှောက်ခြင်း
       const mmkResult = item.coin * ratePerCoin;
+      // ရွေးချယ်ထားသော အမြတ် % တွက်ချက်ခြင်း
       const profitAmount = mmkResult * (profitPercent / 100);
+      // MMK Result တွင် အမြတ် % ပေါင်းထည့်ပြီး Total MMK ထုတ်ခြင်း
       const totalMMK = mmkResult + profitAmount;
-      // ရာပြည့်ကိန်းသို့ အပေါ်တိုးတွက်ချက်ခြင်း (ဥပမာ 6680.40 -> 6700)
-      const roundedHundredMMK = Math.ceil(totalMMK / 100) * 100;
+      // Total MMK ကို ရာပြည့်ကိန်းသို့ အပေါ်တိုးတွက်ချက်ခြင်း
+      const cleanTotal = parseFloat(totalMMK.toFixed(2));
+      const roundedHundredMMK = Math.ceil(cleanTotal / 100) * 100;
 
       return `
         <tr>
-          <td>${item.no}</td>
           <td>${item.plan}</td>
-          <td>${item.org}</td>
           <td>${item.coin}</td>
           <td>${mmkResult.toFixed(2)}</td>
           <td>${profitAmount.toFixed(2)}</td>
@@ -258,7 +261,7 @@
 
       html += `
         <tr>
-          <td colspan="8" class="section-divider">Double Dia Plan</td>
+          <td colspan="6" class="section-divider">Double Dia Plan</td>
         </tr>
       `;
 
@@ -269,306 +272,14 @@
       document.getElementById('tableBody').innerHTML = html;
     }
 
+    // ပေါက်ဈေးရိုက်ထည့်ချိန်နှင့် အမြတ် % ပြောင်းလဲချိန်တိုင်းတွင် ချက်ချင်းတွက်ချက်ပေးရန်
+    document.getElementById('coinRateInput').addEventListener('input', calculateTable);
+    document.getElementById('profitSelect').addEventListener('change', calculateTable);
+    document.getElementById('profitSelect').addEventListener('input', calculateTable);
+
     // စာမျက်နှာစဖွင့်ချိန်တွင် ဇယားအလွတ် (0.00) ဖြင့် ပြသထားရန်
     calculateTable();
   </script>
 
-</body>
-</html>
-
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--text-muted);
-    }
-
-    /* Package Grid */
-    .package-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .pkg-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: 0.2s;
-    }
-
-    .pkg-card.active {
-      border-color: var(--accent-gold);
-      background: #1e293b;
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
-    }
-
-    .pkg-info h3 {
-      font-size: 1rem;
-      color: var(--text-main);
-      margin-bottom: 4px;
-    }
-
-    .pkg-info .coin-tag {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .pkg-info .mmk-price {
-      font-size: 1.05rem;
-      font-weight: bold;
-      color: var(--accent-blue);
-      margin-top: 4px;
-    }
-
-    .qty-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .qty-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      border: 1px solid var(--card-border);
-      background: #0f172a;
-      color: var(--text-main);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-
-    .qty-btn:hover {
-      border-color: var(--accent-blue);
-    }
-
-    .qty-val {
-      min-width: 20px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    /* Summary Box */
-    .summary-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 20px;
-      position: sticky;
-      bottom: 12px;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 0.95rem;
-    }
-
-    .summary-total {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: var(--accent-gold);
-      border-top: 1px solid var(--card-border);
-      padding-top: 10px;
-      margin-top: 6px;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--success);
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 600;
-      display: none;
-      z-index: 1000;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <h1>💎 MLBB Diamond Calculator</h1>
-    <p>Smile Coin Rate ဖြင့် မြန်မာငွေဈေးနှုန်းနှင့် ဘောက်ချာ အလိုအလျောက်တွက်ချက်စနစ်</p>
-  </header>
-
-  <!-- Rate & Profit Settings -->
-  <section class="settings-panel">
-    <div class="input-group">
-      <label for="coinRate">1 Smile Coin ဈေးနှုန်း (MMK)</label>
-      <input type="number" id="coinRate" value="68" step="0.1" oninput="renderPackages()">
-    </div>
-    <div class="input-group">
-      <label for="profitPerPkg">Package တစ်ခုအမြတ် (MMK)</label>
-      <input type="number" id="profitPerPkg" value="300" step="50" oninput="renderPackages()">
-    </div>
-    <button class="btn btn-gold" onclick="copyPriceList()">📋 Price List ကူးယူမည်</button>
-  </section>
-
-  <!-- Packages Grid -->
-  <section class="package-grid" id="packageGrid"></section>
-
-  <!-- Summary & Voucher Section -->
-  <section class="summary-box">
-    <div class="summary-row">
-      <span>ရွေးချယ်ထားသော Packages:</span>
-      <span id="selectedItemsText">မရှိသေးပါ</span>
-    </div>
-    <div class="summary-row">
-      <span>စုစုပေါင်း Smile Coins:</span>
-      <span id="totalCoins">0 Coins</span>
-    </div>
-    <div class="summary-row summary-total">
-      <span>ကျသင့်ငွေ စုစုပေါင်း:</span>
-      <span id="totalMMK">0 Ks</span>
-    </div>
-    <div class="action-buttons">
-      <button class="btn btn-blue" onclick="copyVoucher()">🧾 ဘောက်ချာ Copy ကူးမည်</button>
-      <button class="btn btn-outline" onclick="resetCart()">🔄 အားလုံးဖျက်မည်</button>
-    </div>
-  </section>
-
-  <div class="toast" id="toastMsg">Copied to clipboard!</div>
-
-  <script>
-    // MLBB Brazil (Smile.One) Standard Packages
-    const packages = [
-      { id: 'wdp', name: 'Weekly Diamond Pass', coins: 76, qty: 0 },
-      { id: 'd86', name: '86 Diamonds', coins: 61.5, qty: 0 },
-      { id: 'd172', name: '172 Diamonds', coins: 122, qty: 0 },
-      { id: 'd257', name: '257 Diamonds', coins: 177.5, qty: 0 },
-      { id: 'd343', name: '343 Diamonds', coins: 239, qty: 0 },
-      { id: 'd429', name: '429 Diamonds', coins: 299.5, qty: 0 },
-      { id: 'd514', name: '514 Diamonds', coins: 355, qty: 0 },
-      { id: 'd706', name: '706 Diamonds', coins: 480, qty: 0 },
-      { id: 'd878', name: '878 Diamonds', coins: 602, qty: 0 },
-      { id: 'd1049', name: '1049 Diamonds', coins: 719, qty: 0 },
-      { id: 'd2195', name: '2195 Diamonds', coins: 1453, qty: 0 },
-      { id: 'd3688', name: '3688 Diamonds', coins: 2424, qty: 0 },
-      { id: 'd5532', name: '5532 Diamonds', coins: 3660, qty: 0 },
-      { id: 'd9288', name: '9288 Diamonds', coins: 6079, qty: 0 },
-      { id: 'twilight', name: 'Twilight Pass', coins: 402.5, qty: 0 }
-    ];
-
-    // Calculate MMK price rounded to nearest 50 Kyats
-    function calculateMMK(coins) {
-      const rate = parseFloat(document.getElementById('coinRate').value) || 0;
-      const profit = parseFloat(document.getElementById('profitPerPkg').value) || 0;
-      const rawPrice = (coins * rate) + profit;
-      return Math.ceil(rawPrice / 50) * 50;
-    }
-
-    function renderPackages() {
-      const grid = document.getElementById('packageGrid');
-      grid.innerHTML = '';
-
-      packages.forEach((pkg, index) => {
-        const price = calculateMMK(pkg.coins);
-        const card = document.createElement('div');
-        card.className = `pkg-card ${pkg.qty > 0 ? 'active' : ''}`;
-        card.innerHTML = `
-          <div class="pkg-info">
-            <h3>💎 ${pkg.name}</h3>
-            <div class="coin-tag">${pkg.coins} Smile Coins</div>
-            <div class="mmk-price">${price.toLocaleString()} Ks</div>
-          </div>
-          <div class="qty-controls">
-            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
-            <span class="qty-val">${pkg.qty}</span>
-            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-
-      updateSummary();
-    }
-
-    function updateQty(index, change) {
-      packages[index].qty = Math.max(0, packages[index].qty + change);
-      renderPackages();
-    }
-
-    function updateSummary() {
-      let totalCoins = 0;
-      let totalMMK = 0;
-      let selectedList = [];
-
-      packages.forEach(pkg => {
-        if (pkg.qty > 0) {
-          const price = calculateMMK(pkg.coins);
-          totalCoins += pkg.coins * pkg.qty;
-          totalMMK += price * pkg.qty;
-          selectedList.push(`${pkg.name} (x${pkg.qty})`);
-        }
-      });
-
-      document.getElementById('selectedItemsText').innerText = selectedList.length > 0 ? selectedList.join(', ') : 'မရှိသေးပါ';
-      document.getElementById('totalCoins').innerText = `${totalCoins.toFixed(1)} Coins`;
-      document.getElementById('totalMMK').innerText = `${totalMMK.toLocaleString()} Ks`;
-    }
-
-    function resetCart() {
-      packages.forEach(pkg => pkg.qty = 0);
-      renderPackages();
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toastMsg');
-      toast.innerText = msg;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 2500);
-    }
-
-    function copyPriceList() {
-      let text = "💎 MLBB Diamond Price List 💎\n━━━━━━━━━━━━━━━━━━\n";
-      packages.forEach(pkg => {
-        const price = calculateMMK(pkg.coins);
-        text += `🔹 ${pkg.name} — ${price.toLocaleString()} Ks\n`;
-      });
-      text += "━━━━━━━━━━━━━━━━━━\n✅ ID & Server ပို့ပြီး မှာယူနိုင်ပါပြီ။";
-      navigator.clipboard.writeText(text);
-      showToast("Price List ကို Copy ကူးပြီးပါပြီ!");
-    }
-
-    function copyVoucher() {
-      const activePkgs = packages.filter(p => p.qty > 0);
-      if (activePkgs.length === 0) {
-        showToast("Package အရင်ရွေးချယ်ပေးပါ!");
-        return;
-      }
-
-      let totalMMK = 0;
-      let text = "🧾 MLBB Order Summary\n━━━━━━━━━━━━━━━━━━\n";
-      activePkgs.forEach(pkg => {
-        const price = calculateMMK(pkg.coins) * pkg.qty;
-        totalMMK += price;
-        text += `💎 ${pkg.name} x${pkg.qty} = ${price.toLocaleString()} Ks\n`;
-      });
-      text += `━━━━━━━━━━━━━━━━━━\n💰 စုစုပေါင်းကျသင့်ငွေ: ${totalMMK.toLocaleString()} Ks`;
-      navigator.clipboard.writeText(text);
-      showToast("ဘောက်ချာကို Copy ကူးပြီးပါပြီ!");
-    }
-
-    // Initial render
-    renderPackages();
-  </script>
 </body>
 </html>
