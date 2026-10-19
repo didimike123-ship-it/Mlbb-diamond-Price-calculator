@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1264f5">
+  <title>MLBB BRL Coin Table Calculator</title>
+  <style>
+    :root {
+      --blue: #1264f5;
+      --blue-dark: #084fc8;
+      --page: #e7f2ff;
+      --line: #a8b3c1;
+      --text: #172033;
+      --green: #20bf00;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Myanmar", sans-serif;
+      color: var(--text);
+      background: var(--page);
+    }
+    .topbar {
+      background: #fff;
+      padding: 18px 16px;
+      box-shadow: 0 2px 8px #00000012;
+      text-align: center;
+    }
+    .topbar h1 { margin: 0; font-size: clamp(20px, 4vw, 29px); }
+    .topbar p { margin: 7px 0 0; color: #667085; font-size: 14px; }
+    .container { width: min(1200px, 100%); margin: auto; padding: 20px 14px 28px; }
+    .panel {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 12px #16345b12;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    label { display: block; font-weight: 700; margin-bottom: 8px; }
+    input, select {
+      width: 100%;
+      min-height: 44px;
+      border: 2px solid #d3dce8;
+      border-radius: 7px;
+      padding: 9px 11px;
+      background: white;
+      color: #172033;
+      font: inherit;
+    }
+    input:focus, select:focus { outline: 2px solid #9fc2ff; border-color: var(--blue); }
+    .hint { color: #667085; font-size: 12px; margin-top: 6px; }
+    .table-wrap { overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px #16345b12; }
+    table { width: 100%; min-width: 900px; border-collapse: collapse; text-align: center; }
+    th {
+      background: var(--blue);
+      color: white;
+      padding: 11px 8px;
+      border: 1px solid #d0d7e2;
+      font-size: 14px;
+    }
+    td { padding: 9px 8px; border: 1px solid var(--line); font-size: 14px; }
+    tbody tr:nth-child(even) { background: #f1f8ff; }
+    tbody tr:hover { background: #e2eeff; }
+    .group-row td { background: var(--green); color: white; font-weight: 700; font-size: 16px; }
+    .plan-name { font-weight: 700; }
+    .rounded { font-weight: 700; color: #0755ca; }
+    .contact {
+      display: block; width: fit-content; max-width: 100%;
+      margin: 22px auto 0; padding: 13px 20px;
+      background: #8738df; color: white; text-decoration: none;
+      border-radius: 9px; font-weight: 700; text-align: center;
+    }
+    .footer { text-align: center; color: #667085; font-size: 12px; margin-top: 16px; }
+    @media (max-width: 700px) {
+      .container { padding: 13px 9px 24px; }
+      .panel { padding: 13px; }
+      .controls { grid-template-columns: 1fr; gap: 12px; }
+      .topbar { padding: 16px 10px; }
+      .topbar p { font-size: 12px; }
+      th, td { padding: 8px 7px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <h1>MLBB BRL Coin Table Calculator</h1>
+    <p>Coin Rate ပြောင်းပြီး Diamond Plan ဈေးနှုန်းများကို အလိုအလျောက်တွက်ချက်ပါ</p>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <div class="controls">
+        <div>
+          <label for="coinRate">Coin Rate (MMK)</label>
+          <input id="coinRate" type="number" min="0" step="any" value="87900" inputmode="decimal">
+          <div class="hint">ဥပမာ - 87900 ထည့်ပါ။ Coin Price 1000 အတွက် MMK Rate ဖြစ်သည်။</div>
+        </div>
+        <div>
+          <label for="profit">အမြတ် % ရွေးပါ</label>
+          <select id="profit">
+            <option value="0">0%</option>
+            <option value="3">3%</option>
+            <option value="5">5%</option>
+            <option value="7">7%</option>
+            <option value="10">10%</option>
+            <option value="12">12%</option>
+            <option value="15">15%</option>
+            <option value="20">20%</option>
+            <option value="25">25%</option>
+            <option value="30">30%</option>
+          </select>
+        </div>
+        <div>
+          <label for="contactName">Telegram Contact</label>
+          <input id="contactName" type="text" value="@shine_nyo" placeholder="@username">
+          <div class="hint">အောက်က Contact ခလုတ်မှာ ပြသမယ့် username ကို ပြင်နိုင်ပါတယ်။</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Dia Plan</th>
+            <th>Org Dia Plan</th>
+            <th>Coin Price</th>
+            <th>MMK Result</th>
+            <th>အမြတ်</th>
+            <th>Total MMK</th>
+            <th>Total MMK (Rounded)</th>
+          </tr>
+        </thead>
+        <tbody id="planRows"></tbody>
+      </table>
+    </div>
+
+    <a class="contact" id="contactLink" href="https://t.me/shine_nyo" target="_blank" rel="noopener noreferrer">📞 ဆက်သွယ်ရန် - @shine_nyo</a>
+    <p class="footer">Prices are calculated automatically. Rounded prices are rounded UP to the next 100 MMK.</p>
+  </main>
+
+  <script>
+    // You can edit the plans in this list.
+    // WEB (39) and MEB (196.5) are placed after plan No. 3, as requested.
+    const plans = [
+      { name: "Weekly Pass", original: "", coin: 76 },
+      { name: "Twilight Pass", original: "", coin: 402.5 },
+      { name: "86", original: "78+8", coin: 61.5 },
+      { name: "WEB", original: "WEB coin amount", coin: 39 },
+      { name: "MEB", original: "MEB coin amount", coin: 196.5 },
+      { name: "172", original: "156+16", coin: 122 },
+      { name: "257", original: "234+23", coin: 177.5 },
+      { name: "343", original: "257+86", coin: 239 },
+      { name: "429", original: "257+172", coin: 299.5 },
+      { name: "514", original: "257+257", coin: 355 },
+      { name: "600", original: "514+86", coin: 416.5 },
+      { name: "706", original: "625+81", coin: 480 },
+      { name: "878", original: "706+172", coin: 602 },
+      { name: "963", original: "706+257", coin: 657.5 },
+      { name: "1049", original: "706+343", coin: 719 },
+      { name: "1135", original: "706+429", coin: 779.5 },
+      { name: "1412", original: "706+706", coin: 960 },
+      { name: "2195", original: "1860+335", coin: 1453 },
+      { name: "2901", original: "2195+706", coin: 1933 },
+      { name: "3688", original: "3099+589", coin: 2424 },
+      { name: "5532", original: "4649+883", coin: 3660 },
+      { name: "9288", original: "7740+1548", coin: 6079 }
+    ];
+
+    const doublePlans = [
+      { name: "50+", original: "", coin: 39 },
+      { name: "150+", original: "", coin: 116.9 },
+      { name: "250+", original: "", coin: 187.5 },
+      { name: "500+", original: "", coin: 385 }
+    ];
+
+    const money = value => Number.isFinite(value)
+      ? value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : "—";
+
+    function makeRow(plan, index) {
+      const rateInput = document.getElementById("coinRate");
+      const profitInput = document.getElementById("profit");
+      const rate = Math.max(0, Number(rateInput.value) || 0) / 1000;
+      const profitPercent = Math.max(0, Number(profitInput.value) || 0);
+      const base = plan.coin * rate;
+      const profit = base * profitPercent / 100;
+      const total = base + profit;
+      const rounded = total > 0 ? Math.ceil(total / 100) * 100 : 0;
+
+      return `<tr>
+        <td>${index}</td>
+        <td class="plan-name">${plan.name}</td>
+        <td>${plan.original || "—"}</td>
+        <td>${plan.coin.toLocaleString("en-US", { maximumFractionDigits: 2 })}</td>
+        <td>${money(base)}</td>
+        <td>${money(profit)}</td>
+        <td>${money(total)}</td>
+        <td class="rounded">${rounded.toLocaleString("en-US")}</td>
+      </tr>`;
+    }
+
+    function renderTable() {
+      const rows = [];
+      plans.forEach((plan, i) => rows.push(makeRow(plan, i + 1)));
+      rows.push('<tr class="group-row"><td colspan="8">Double Dia Plan</td></tr>');
+      doublePlans.forEach((plan, i) => rows.push(makeRow(plan, plans.length + i + 1)));
+      document.getElementById("planRows").innerHTML = rows.join("");
+    }
+
+    function updateContact() {
+      const input = document.getElementById("contactName");
+      const link = document.getElementById("contactLink");
+      let username = input.value.trim().replace(/^@/, "").replace(/[^a-zA-Z0-9_]/g, "");
+      if (!username) username = "shine_nyo";
+      link.textContent = `📞 ဆက်သွယ်ရန် - @${username}`;
+      link.href = `https://t.me/${username}`;
+    }
+
+    document.getElementById("coinRate").addEventListener("input", renderTable);
+    document.getElementById("profit").addEventListener("change", renderTable);
+    document.getElementById("contactName").addEventListener("input", updateContact);
+    renderTable();
+    updateContact();
+  </script>
+</body>
+</html>
