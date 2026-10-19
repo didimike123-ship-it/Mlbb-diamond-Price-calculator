@@ -3,232 +3,406 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1264f5">
-  <title>MLBB BRL Coin Table Calculator</title>
+  <title>MLBB Diamond Price Calculator</title>
   <style>
     :root {
-      --blue: #1264f5;
-      --blue-dark: #084fc8;
-      --page: #e7f2ff;
-      --line: #a8b3c1;
-      --text: #172033;
-      --green: #20bf00;
+      --bg-dark: #0b1120;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent-gold: #f59e0b;
+      --accent-blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
     }
-    * { box-sizing: border-box; }
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      font-family: Arial, "Noto Sans Myanmar", sans-serif;
-      color: var(--text);
-      background: var(--page);
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .topbar {
-      background: #fff;
-      padding: 18px 16px;
-      box-shadow: 0 2px 8px #00000012;
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
       text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 20px;
     }
-    .topbar h1 { margin: 0; font-size: clamp(20px, 4vw, 29px); }
-    .topbar p { margin: 7px 0 0; color: #667085; font-size: 14px; }
-    .container { width: min(1200px, 100%); margin: auto; padding: 20px 14px 28px; }
-    .panel {
-      background: #fff;
+
+    header h1 {
+      color: var(--accent-gold);
+      font-size: 1.7rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Rate Setting Box */
+    .settings-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 12px #16345b12;
-    }
-    .controls {
+      margin-bottom: 20px;
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      align-items: end;
     }
-    label { display: block; font-weight: 700; margin-bottom: 8px; }
-    input, select {
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
       width: 100%;
-      min-height: 44px;
-      border: 2px solid #d3dce8;
-      border-radius: 7px;
-      padding: 9px 11px;
-      background: white;
-      color: #172033;
-      font: inherit;
+      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
     }
-    input:focus, select:focus { outline: 2px solid #9fc2ff; border-color: var(--blue); }
-    .hint { color: #667085; font-size: 12px; margin-top: 6px; }
-    .table-wrap { overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px #16345b12; }
-    table { width: 100%; min-width: 900px; border-collapse: collapse; text-align: center; }
-    th {
-      background: var(--blue);
-      color: white;
-      padding: 11px 8px;
-      border: 1px solid #d0d7e2;
-      font-size: 14px;
+
+    .input-group input:focus {
+      border-color: var(--accent-blue);
     }
-    td { padding: 9px 8px; border: 1px solid var(--line); font-size: 14px; }
-    tbody tr:nth-child(even) { background: #f1f8ff; }
-    tbody tr:hover { background: #e2eeff; }
-    .group-row td { background: var(--green); color: white; font-weight: 700; font-size: 16px; }
-    .plan-name { font-weight: 700; }
-    .rounded { font-weight: 700; color: #0755ca; }
-    .contact {
-      display: block; width: fit-content; max-width: 100%;
-      margin: 22px auto 0; padding: 13px 20px;
-      background: #8738df; color: white; text-decoration: none;
-      border-radius: 9px; font-weight: 700; text-align: center;
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.95rem;
     }
-    .footer { text-align: center; color: #667085; font-size: 12px; margin-top: 16px; }
-    @media (max-width: 700px) {
-      .container { padding: 13px 9px 24px; }
-      .panel { padding: 13px; }
-      .controls { grid-template-columns: 1fr; gap: 12px; }
-      .topbar { padding: 16px 10px; }
-      .topbar p { font-size: 12px; }
-      th, td { padding: 8px 7px; }
+
+    .btn-gold {
+      background: var(--accent-gold);
+      color: #000;
+    }
+
+    .btn-gold:hover {
+      background: #d97706;
+    }
+
+    .btn-blue {
+      background: var(--accent-blue);
+      color: #000;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--text-muted);
+    }
+
+    /* Package Grid */
+    .package-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .pkg-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.2s;
+    }
+
+    .pkg-card.active {
+      border-color: var(--accent-gold);
+      background: #1e293b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+    }
+
+    .pkg-info h3 {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .pkg-info .coin-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pkg-info .mmk-price {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--accent-blue);
+      margin-top: 4px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #0f172a;
+      color: var(--text-main);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .qty-btn:hover {
+      border-color: var(--accent-blue);
+    }
+
+    .qty-val {
+      min-width: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Summary Box */
+    .summary-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      position: sticky;
+      bottom: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .summary-total {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      border-top: 1px solid var(--card-border);
+      padding-top: 10px;
+      margin-top: 6px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <h1>MLBB BRL Coin Table Calculator</h1>
-    <p>Coin Rate ပြောင်းပြီး Diamond Plan ဈေးနှုန်းများကို အလိုအလျောက်တွက်ချက်ပါ</p>
+
+  <header>
+    <h1>💎 MLBB Diamond Calculator</h1>
+    <p>Smile Coin Rate ဖြင့် မြန်မာငွေဈေးနှုန်းနှင့် ဘောက်ချာ အလိုအလျောက်တွက်ချက်စနစ်</p>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <div class="controls">
-        <div>
-          <label for="coinRate">Coin Rate (MMK)</label>
-          <input id="coinRate" type="number" min="0" step="any" value="87900" inputmode="decimal">
-          <div class="hint">ဥပမာ - 87900 ထည့်ပါ။ Coin Price 1000 အတွက် MMK Rate ဖြစ်သည်။</div>
-        </div>
-        <div>
-          <label for="profit">အမြတ် % ရွေးပါ</label>
-          <select id="profit">
-            <option value="0">0%</option>
-            <option value="3">3%</option>
-            <option value="5">5%</option>
-            <option value="7">7%</option>
-            <option value="10">10%</option>
-            <option value="12">12%</option>
-            <option value="15">15%</option>
-            <option value="20">20%</option>
-            <option value="25">25%</option>
-            <option value="30">30%</option>
-          </select>
-        </div>
-        <div>
-          <label for="contactName">Telegram Contact</label>
-          <input id="contactName" type="text" value="@shine_nyo" placeholder="@username">
-          <div class="hint">အောက်က Contact ခလုတ်မှာ ပြသမယ့် username ကို ပြင်နိုင်ပါတယ်။</div>
-        </div>
-      </div>
-    </section>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Dia Plan</th>
-            <th>Org Dia Plan</th>
-            <th>Coin Price</th>
-            <th>MMK Result</th>
-            <th>အမြတ်</th>
-            <th>Total MMK</th>
-            <th>Total MMK (Rounded)</th>
-          </tr>
-        </thead>
-        <tbody id="planRows"></tbody>
-      </table>
+  <!-- Rate & Profit Settings -->
+  <section class="settings-panel">
+    <div class="input-group">
+      <label for="coinRate">1 Smile Coin ဈေးနှုန်း (MMK)</label>
+      <input type="number" id="coinRate" value="68" step="0.1" oninput="renderPackages()">
     </div>
+    <div class="input-group">
+      <label for="profitPerPkg">Package တစ်ခုအမြတ် (MMK)</label>
+      <input type="number" id="profitPerPkg" value="300" step="50" oninput="renderPackages()">
+    </div>
+    <button class="btn btn-gold" onclick="copyPriceList()">📋 Price List ကူးယူမည်</button>
+  </section>
 
-    <a class="contact" id="contactLink" href="https://t.me/shine_nyo" target="_blank" rel="noopener noreferrer">📞 ဆက်သွယ်ရန် - @shine_nyo</a>
-    <p class="footer">Prices are calculated automatically. Rounded prices are rounded UP to the next 100 MMK.</p>
-  </main>
+  <!-- Packages Grid -->
+  <section class="package-grid" id="packageGrid"></section>
+
+  <!-- Summary & Voucher Section -->
+  <section class="summary-box">
+    <div class="summary-row">
+      <span>ရွေးချယ်ထားသော Packages:</span>
+      <span id="selectedItemsText">မရှိသေးပါ</span>
+    </div>
+    <div class="summary-row">
+      <span>စုစုပေါင်း Smile Coins:</span>
+      <span id="totalCoins">0 Coins</span>
+    </div>
+    <div class="summary-row summary-total">
+      <span>ကျသင့်ငွေ စုစုပေါင်း:</span>
+      <span id="totalMMK">0 Ks</span>
+    </div>
+    <div class="action-buttons">
+      <button class="btn btn-blue" onclick="copyVoucher()">🧾 ဘောက်ချာ Copy ကူးမည်</button>
+      <button class="btn btn-outline" onclick="resetCart()">🔄 အားလုံးဖျက်မည်</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toastMsg">Copied to clipboard!</div>
 
   <script>
-    // You can edit the plans in this list.
-    // WEB (39) and MEB (196.5) are placed after plan No. 3, as requested.
-    const plans = [
-      { name: "Weekly Pass", original: "", coin: 76 },
-      { name: "Twilight Pass", original: "", coin: 402.5 },
-      { name: "86", original: "78+8", coin: 61.5 },
-      { name: "WEB", original: "WEB coin amount", coin: 39 },
-      { name: "MEB", original: "MEB coin amount", coin: 196.5 },
-      { name: "172", original: "156+16", coin: 122 },
-      { name: "257", original: "234+23", coin: 177.5 },
-      { name: "343", original: "257+86", coin: 239 },
-      { name: "429", original: "257+172", coin: 299.5 },
-      { name: "514", original: "257+257", coin: 355 },
-      { name: "600", original: "514+86", coin: 416.5 },
-      { name: "706", original: "625+81", coin: 480 },
-      { name: "878", original: "706+172", coin: 602 },
-      { name: "963", original: "706+257", coin: 657.5 },
-      { name: "1049", original: "706+343", coin: 719 },
-      { name: "1135", original: "706+429", coin: 779.5 },
-      { name: "1412", original: "706+706", coin: 960 },
-      { name: "2195", original: "1860+335", coin: 1453 },
-      { name: "2901", original: "2195+706", coin: 1933 },
-      { name: "3688", original: "3099+589", coin: 2424 },
-      { name: "5532", original: "4649+883", coin: 3660 },
-      { name: "9288", original: "7740+1548", coin: 6079 }
+    // MLBB Brazil (Smile.One) Standard Packages
+    const packages = [
+      { id: 'wdp', name: 'Weekly Diamond Pass', coins: 76, qty: 0 },
+      { id: 'd86', name: '86 Diamonds', coins: 61.5, qty: 0 },
+      { id: 'd172', name: '172 Diamonds', coins: 122, qty: 0 },
+      { id: 'd257', name: '257 Diamonds', coins: 177.5, qty: 0 },
+      { id: 'd343', name: '343 Diamonds', coins: 239, qty: 0 },
+      { id: 'd429', name: '429 Diamonds', coins: 299.5, qty: 0 },
+      { id: 'd514', name: '514 Diamonds', coins: 355, qty: 0 },
+      { id: 'd706', name: '706 Diamonds', coins: 480, qty: 0 },
+      { id: 'd878', name: '878 Diamonds', coins: 602, qty: 0 },
+      { id: 'd1049', name: '1049 Diamonds', coins: 719, qty: 0 },
+      { id: 'd2195', name: '2195 Diamonds', coins: 1453, qty: 0 },
+      { id: 'd3688', name: '3688 Diamonds', coins: 2424, qty: 0 },
+      { id: 'd5532', name: '5532 Diamonds', coins: 3660, qty: 0 },
+      { id: 'd9288', name: '9288 Diamonds', coins: 6079, qty: 0 },
+      { id: 'twilight', name: 'Twilight Pass', coins: 402.5, qty: 0 }
     ];
 
-    const doublePlans = [
-      { name: "50+", original: "", coin: 39 },
-      { name: "150+", original: "", coin: 116.9 },
-      { name: "250+", original: "", coin: 187.5 },
-      { name: "500+", original: "", coin: 385 }
-    ];
-
-    const money = value => Number.isFinite(value)
-      ? value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-      : "—";
-
-    function makeRow(plan, index) {
-      const rateInput = document.getElementById("coinRate");
-      const profitInput = document.getElementById("profit");
-      const rate = Math.max(0, Number(rateInput.value) || 0) / 1000;
-      const profitPercent = Math.max(0, Number(profitInput.value) || 0);
-      const base = plan.coin * rate;
-      const profit = base * profitPercent / 100;
-      const total = base + profit;
-      const rounded = total > 0 ? Math.ceil(total / 100) * 100 : 0;
-
-      return `<tr>
-        <td>${index}</td>
-        <td class="plan-name">${plan.name}</td>
-        <td>${plan.original || "—"}</td>
-        <td>${plan.coin.toLocaleString("en-US", { maximumFractionDigits: 2 })}</td>
-        <td>${money(base)}</td>
-        <td>${money(profit)}</td>
-        <td>${money(total)}</td>
-        <td class="rounded">${rounded.toLocaleString("en-US")}</td>
-      </tr>`;
+    // Calculate MMK price rounded to nearest 50 Kyats
+    function calculateMMK(coins) {
+      const rate = parseFloat(document.getElementById('coinRate').value) || 0;
+      const profit = parseFloat(document.getElementById('profitPerPkg').value) || 0;
+      const rawPrice = (coins * rate) + profit;
+      return Math.ceil(rawPrice / 50) * 50;
     }
 
-    function renderTable() {
-      const rows = [];
-      plans.forEach((plan, i) => rows.push(makeRow(plan, i + 1)));
-      rows.push('<tr class="group-row"><td colspan="8">Double Dia Plan</td></tr>');
-      doublePlans.forEach((plan, i) => rows.push(makeRow(plan, plans.length + i + 1)));
-      document.getElementById("planRows").innerHTML = rows.join("");
+    function renderPackages() {
+      const grid = document.getElementById('packageGrid');
+      grid.innerHTML = '';
+
+      packages.forEach((pkg, index) => {
+        const price = calculateMMK(pkg.coins);
+        const card = document.createElement('div');
+        card.className = `pkg-card ${pkg.qty > 0 ? 'active' : ''}`;
+        card.innerHTML = `
+          <div class="pkg-info">
+            <h3>💎 ${pkg.name}</h3>
+            <div class="coin-tag">${pkg.coins} Smile Coins</div>
+            <div class="mmk-price">${price.toLocaleString()} Ks</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+            <span class="qty-val">${pkg.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      updateSummary();
     }
 
-    function updateContact() {
-      const input = document.getElementById("contactName");
-      const link = document.getElementById("contactLink");
-      let username = input.value.trim().replace(/^@/, "").replace(/[^a-zA-Z0-9_]/g, "");
-      if (!username) username = "shine_nyo";
-      link.textContent = `📞 ဆက်သွယ်ရန် - @${username}`;
-      link.href = `https://t.me/${username}`;
+    function updateQty(index, change) {
+      packages[index].qty = Math.max(0, packages[index].qty + change);
+      renderPackages();
     }
 
-    document.getElementById("coinRate").addEventListener("input", renderTable);
-    document.getElementById("profit").addEventListener("change", renderTable);
-    document.getElementById("contactName").addEventListener("input", updateContact);
-    renderTable();
-    updateContact();
+    function updateSummary() {
+      let totalCoins = 0;
+      let totalMMK = 0;
+      let selectedList = [];
+
+      packages.forEach(pkg => {
+        if (pkg.qty > 0) {
+          const price = calculateMMK(pkg.coins);
+          totalCoins += pkg.coins * pkg.qty;
+          totalMMK += price * pkg.qty;
+          selectedList.push(`${pkg.name} (x${pkg.qty})`);
+        }
+      });
+
+      document.getElementById('selectedItemsText').innerText = selectedList.length > 0 ? selectedList.join(', ') : 'မရှိသေးပါ';
+      document.getElementById('totalCoins').innerText = `${totalCoins.toFixed(1)} Coins`;
+      document.getElementById('totalMMK').innerText = `${totalMMK.toLocaleString()} Ks`;
+    }
+
+    function resetCart() {
+      packages.forEach(pkg => pkg.qty = 0);
+      renderPackages();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    function copyPriceList() {
+      let text = "💎 MLBB Diamond Price List 💎\n━━━━━━━━━━━━━━━━━━\n";
+      packages.forEach(pkg => {
+        const price = calculateMMK(pkg.coins);
+        text += `🔹 ${pkg.name} — ${price.toLocaleString()} Ks\n`;
+      });
+      text += "━━━━━━━━━━━━━━━━━━\n✅ ID & Server ပို့ပြီး မှာယူနိုင်ပါပြီ။";
+      navigator.clipboard.writeText(text);
+      showToast("Price List ကို Copy ကူးပြီးပါပြီ!");
+    }
+
+    function copyVoucher() {
+      const activePkgs = packages.filter(p => p.qty > 0);
+      if (activePkgs.length === 0) {
+        showToast("Package အရင်ရွေးချယ်ပေးပါ!");
+        return;
+      }
+
+      let totalMMK = 0;
+      let text = "🧾 MLBB Order Summary\n━━━━━━━━━━━━━━━━━━\n";
+      activePkgs.forEach(pkg => {
+        const price = calculateMMK(pkg.coins) * pkg.qty;
+        totalMMK += price;
+        text += `💎 ${pkg.name} x${pkg.qty} = ${price.toLocaleString()} Ks\n`;
+      });
+      text += `━━━━━━━━━━━━━━━━━━\n💰 စုစုပေါင်းကျသင့်ငွေ: ${totalMMK.toLocaleString()} Ks`;
+      navigator.clipboard.writeText(text);
+      showToast("ဘောက်ချာကို Copy ကူးပြီးပါပြီ!");
+    }
+
+    // Initial render
+    renderPackages();
   </script>
 </body>
 </html>
