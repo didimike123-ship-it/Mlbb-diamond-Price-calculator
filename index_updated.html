@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1264f5">
+<title>MLBB Diamond Price Calculator</title>
+<style>
+:root{--blue:#1264f5;--page:#e7f2ff;--line:#aab5c2;--green:#20bf00}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Myanmar",sans-serif;background:var(--page);color:#172033}
+header{background:#fff;text-align:center;padding:18px 12px;box-shadow:0 2px 8px #0001}
+h1{font-size:clamp(20px,4vw,29px);margin:0}
+header p{color:#667085;margin:7px 0 0;font-size:13px}
+main{max-width:1250px;margin:auto;padding:18px 12px 28px}
+.panel{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #16345b12}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+label{display:block;font-weight:bold;margin-bottom:8px}
+input,select{width:100%;min-height:44px;border:2px solid #d3dce8;border-radius:7px;padding:9px 11px;font:inherit;background:#fff}
+.hint{font-size:12px;color:#667085;margin-top:6px}
+.table-wrap{overflow-x:auto;background:#fff;border-radius:8px;box-shadow:0 2px 10px #16345b12}
+table{width:100%;min-width:980px;border-collapse:collapse;text-align:center}
+th{background:var(--blue);color:#fff;padding:11px 8px;border:1px solid #d0d7e2;font-size:14px}
+td{padding:9px 8px;border:1px solid var(--line);font-size:14px}
+tbody tr:nth-child(even){background:#f1f8ff}
+tbody tr:hover{background:#e2eeff}
+.section td{background:var(--green);color:white;font-weight:bold;font-size:16px}
+.name{font-weight:bold}
+.rounded{font-weight:bold;color:#0755ca}
+.contact{display:block;width:fit-content;max-width:100%;margin:22px auto 0;padding:13px 20px;background:#8738df;color:#fff;text-decoration:none;border-radius:9px;font-weight:bold;text-align:center}
+.note{text-align:center;color:#667085;font-size:12px;margin-top:15px}
+@media(max-width:700px){main{padding:12px 8px 24px}.panel{padding:13px}.controls{grid-template-columns:1fr;gap:12px}header{padding:16px 10px}}
+</style>
+</head>
+<body>
+<header>
+<h1>MLBB Diamond Price Calculator</h1>
+<p>Coin Rate နဲ့ အမြတ် % ပြောင်းပြီး ဈေးနှုန်းများကို အလိုအလျောက်တွက်ချက်ပါ</p>
+</header>
+<main>
+<section class="panel">
+<div class="controls">
+<div>
+<label for="rate">Coin Rate (MMK)</label>
+<input id="rate" type="number" min="0" step="any" value="87900" inputmode="decimal">
+<div class="hint">ဥပမာ - 87900</div>
+</div>
+<div>
+<label for="profit">အမြတ် % ရွေးပါ</label>
+<select id="profit">
+<option value="0">0%</option><option value="3">3%</option><option value="5">5%</option>
+<option value="7">7%</option><option value="10">10%</option><option value="12">12%</option>
+<option value="15">15%</option><option value="20">20%</option><option value="25">25%</option><option value="30">30%</option>
+</select>
+</div>
+<div>
+<label for="contact">Telegram Contact</label>
+<input id="contact" value="@shine_nyo" placeholder="@username">
+<div class="hint">မိမိ Telegram username ကို ပြင်နိုင်ပါတယ်။</div>
+</div>
+</div>
+</section>
+<div class="table-wrap">
+<table>
+<thead><tr><th>No.</th><th>Dia Plan</th><th>Org Dia Plan</th><th>Coin Price</th><th>MMK Result</th><th>အမြတ်</th><th>Total MMK</th><th>Total MMK (Rounded)</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<a class="contact" id="contactLink" href="https://t.me/shine_nyo" target="_blank" rel="noopener">📞 ဆက်သွယ်ရန် - @shine_nyo</a>
+<p class="note">Rounded Total ကို နောက်ထပ် ရာပြည့်ကိန်းသို့ အပေါ်တိုးတွက်ထားသည်။</p>
+</main>
+<script>
+// Coin Price values below are copied from the user's supplied price list.
+// Values such as 46,20 are entered as 46.20.
+const standardPlans = [
+{name:"WEB",desc:"Weekly Elite Bundle",coin:46.20},
+{name:"55",desc:"55 Diamond",coin:46.20},
+{name:"86",desc:"78+8 Diamond",coin:72.30},
+{name:"WP",desc:"Weekly Diamond Pass",coin:92.50},
+{name:"165",desc:"165 Diamond",coin:138.60},
+{name:"172",desc:"156+16 Diamond",coin:144.50},
+{name:"257",desc:"234+23 Diamond",coin:216.80},
+{name:"MEB",desc:"Monthly Epic Bundle",coin:228.30},
+{name:"275",desc:"275 Diamond",coin:228.30},
+{name:"565",desc:"565 Diamond",coin:468.20},
+{name:"TW",desc:"Twilight Pass",coin:476.90},
+{name:"706",desc:"625+81 Diamond",coin:578.00},
+{name:"2195",desc:"1860+335 Diamond",coin:1734.10},
+{name:"3688",desc:"3099+589 Diamond",coin:2890.20},
+{name:"5532",desc:"4649+883 Diamond",coin:4335.30},
+{name:"9288",desc:"7740+1548 Diamond",coin:7225.40}
+];
+const comboPlans = [
+{name:"258",desc:"172+86",coin:216.80},
+{name:"344",desc:"172+172",coin:289.00},
+{name:"343",desc:"257+86",coin:289.10},
+{name:"429",desc:"257+172",coin:361.30},
+{name:"430",desc:"172+172+86",coin:361.30},
+{name:"514",desc:"257+257",coin:433.60},
+{name:"600",desc:"257+257+86",coin:505.90},
+{name:"792",desc:"706+86",coin:650.30},
+{name:"878",desc:"706+172",coin:722.50},
+{name:"963",desc:"706+257",coin:794.80},
+{name:"1050",desc:"706+172+172",coin:867.00},
+{name:"1049",desc:"706+257+86",coin:867.10},
+{name:"1135",desc:"706+257+172",coin:939.30},
+{name:"1220",desc:"706+257+257",coin:1011.60},
+{name:"1412",desc:"706+706",coin:1156.00},
+{name:"1669",desc:"706+706+257",coin:1372.80},
+{name:"1841",desc:"706+706+257+172",coin:1517.30},
+{name:"2901",desc:"2195+706",coin:2312.10}
+];
+const fmt = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function row(plan,no){
+ const rate=(Number(document.getElementById("rate").value)||0)/1000;
+ const pct=Number(document.getElementById("profit").value)||0;
+ const base=plan.coin*rate, profit=base*pct/100, total=base+profit;
+ const rounded=total>0?Math.ceil(total/100)*100:0;
+ return `<tr><td>${no}</td><td class="name">${plan.name}</td><td>${plan.desc}</td><td>${fmt(plan.coin)}</td><td>${fmt(base)}</td><td>${fmt(profit)}</td><td>${fmt(total)}</td><td class="rounded">${rounded.toLocaleString("en-US")}</td></tr>`;
+}
+function render(){
+ let html=standardPlans.map((p,i)=>row(p,i+1)).join("");
+ html+=`<tr class="section"><td colspan="8">Combo (Multi-order)</td></tr>`;
+ html+=comboPlans.map((p,i)=>row(p,standardPlans.length+i+1)).join("");
+ document.getElementById("rows").innerHTML=html;
+}
+function updateContact(){
+ let u=document.getElementById("contact").value.trim().replace(/^@/,"").replace(/[^a-zA-Z0-9_]/g,"");
+ if(!u)u="shine_nyo";
+ const a=document.getElementById("contactLink");a.textContent=`📞 ဆက်သွယ်ရန် - @${u}`;a.href=`https://t.me/${u}`;
+}
+document.getElementById("rate").addEventListener("input",render);
+document.getElementById("profit").addEventListener("change",render);
+document.getElementById("contact").addEventListener("input",updateContact);
+render();updateContact();
+</script>
+</body>
+</html>
